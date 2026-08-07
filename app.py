@@ -1,6 +1,5 @@
 import yfinance as yf
 import pandas as pd
-import pandas_ta as ta
 from scipy.signal import find_peaks
 import streamlit as st
 
@@ -16,7 +15,11 @@ def analisar_ativo(ticker_symbol):
         if df_semanal.empty or df_diario.empty or df_60m.empty:
             return None
 
-        df_semanal['EMA_72'] = ta.ema(df_semanal['Close'], length=72)
+        df_semanal['EMA_72'] = (
+            df_semanal['Close']
+            .ewm(span=72, adjust=False)
+            .mean()
+        )
         preco_atual = df_diario['Close'].iloc[-1]
         ema_72_sem_atual = df_semanal['EMA_72'].iloc[-1]
         
